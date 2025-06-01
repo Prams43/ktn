@@ -12,25 +12,16 @@ let keranjang = {};
 function tambahPembelian(nama, harga) {
   total += harga;
   document.getElementById("total").innerText = total.toLocaleString();
-
   keranjang[nama] = (keranjang[nama] || 0) + 1;
-  
   document.getElementById("konfir").style.display = "block";
-
-  const formData = new FormData();
-  formData.append("nama", nama);
-  formData.append("harga", harga);
 
   fetch("koneksi.php", {
     method: "POST",
-    body: formData
-  }).then(response => response.text())
-    .then(result => {
-      if (result !== "success") {
-        alert("Gagal menyimpan transaksi.");
-      }
-    });
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nama, harga })
+  });
 }
+
 
 function konfirmasiPembayaran() {
   document.getElementById("qr").style.display = "block";
@@ -55,7 +46,7 @@ function sudahBayar(){
 
 </script>
 <body>
-    <nav class="navbar navbar-expand-lg bg-light">
+    <nav class="navbar navbar-expand-lg bg-primary">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Kantin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -226,7 +217,7 @@ consequatur corporis temporibus repudiandae odio ut nobis dignissimos sequi face
     $sql = "SELECT * FROM menu";
     $result = $conn->query($sql);
 
-    $kategori = ["Kantin Pak Rusdi" => ["Katsu", "Es"], "Kantin Bu Dwi" => ["", "",]];
+    $kategori = ["Kantin Pak Rusdi" => ["Katsu", "Es"], "Kantin Bu Dwi" => ["Ayam", "Teh",]];
     $kategoriSekarang = "";
     $kategoriTampil = [];
 
@@ -235,16 +226,14 @@ while ($row = $result->fetch_assoc()) {
     $harga = $row['harga'];
     $stok = $row['stok'];
 
-    // Cek kategori produk
     foreach ($kategori as $label => $kataKunci) {
         foreach ($kataKunci as $kata) {
             if (stripos($nama, $kata) !== false) {
-                // Jika kategori belum pernah tampil, tampilkan heading
                 if (!in_array($label, $kategoriTampil)) {
                     echo "<h2 class='ms-5 mt-5'>$label</h2>";
-                    $kategoriTampil[] = $label;  // Tandai sudah tampil
+                    $kategoriTampil[] = $label; 
                 }
-                break 2; // Keluar dari kedua foreach setelah ketemu kategori
+                break 2;
             }
         }
     }
@@ -259,7 +248,7 @@ while ($row = $result->fetch_assoc()) {
     echo "</h5></div>";
 }
 
-    $conn->close();
+  
     ?>
     <h3 class="ms-5 mt-3">Total Pembayaran: Rp<span id="total">0</span></h3>
     <div id="konfir" class="mt-3 mb-5 ms-5" style="display: none;">
@@ -270,7 +259,7 @@ while ($row = $result->fetch_assoc()) {
 
 <div id="qr" class="mt-3 ms-5 mb-5" style="display: none;">
   <h4>Scan QR untuk pembayaran:</h4>
-  <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Bayar+ke+Kantin+Sekolah" alt="QR Code">
+  <img src="qr.png" alt="QR Code" width="20%">
 </div>
 
 <div id="sdh"class="mt-3 mb-5 ms-5" style="display: none;">
