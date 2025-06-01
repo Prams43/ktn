@@ -1,6 +1,5 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "kantin");
-$conn->query("INSERT INTO transaksi (nama, harga) VALUES ('{$_POST['nama']}', {$_POST['harga']})")
-    ? print("success") : print("gagal");
-$conn->close();
+$data = json_decode(file_get_contents("php://input"), true);
+$nama = $data['nama'];
+$harga = $data['harga'];
 ?>
