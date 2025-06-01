@@ -1,24 +1,9 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "kantin";
-
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-  die("Koneksi gagal: " . $conn->connect_error);
-}
-
+$conn = new mysqli("localhost", "root", "", "kantin1");
 $data = json_decode(file_get_contents("php://input"), true);
-
 foreach ($data as $nama => $jumlah) {
-  // Kurangi stok
-  $stmt = $conn->prepare("UPDATE menu SET stok = stok - ? WHERE nama = ? AND stok >= ?");
-  $stmt->bind_param("isi", $jumlah, $nama, $jumlah);
-  $stmt->execute();
+    $conn->query("UPDATE menu SET stok = stok - $jumlah WHERE nama = '$nama' AND stok >= $jumlah");
 }
-
 echo "stok terupdate";
-
 $conn->close();
 ?>
